@@ -20,12 +20,16 @@ public class LoginView extends Activity {
     private static final String TAG = "LoginView";
     public static final String STORE = "STORE";
     private CloudMineWebService webService = new CloudMineWebService("c1a562ee1e6f4a478803e7b51babe287");
+
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
         setDefaultLogin();
     }
+
 
     public void create(View view) {
         webService.asyncCreateUser(getUser(), new CloudMineResponseCallback() {
@@ -49,7 +53,7 @@ public class LoginView extends Activity {
 
             @Override
             public void onFailure(Throwable error, String message) {
-                Log.e(TAG, "LogIn failed: ",  error);
+                Log.e(TAG, "LogIn failed: ", error);
             }
         });
     }
