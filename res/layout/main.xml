@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent">
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1">
+    <TextView android:id="@+id/emailLabel"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="E-Mail:" />
+
+    <EditText android:id="@+id/email"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:background="@android:drawable/editbox_background"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1">
+    <TextView android:id="@+id/passwordLabel"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Password:" />
+
+    <EditText android:id="@+id/password"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:background="@android:drawable/editbox_background"
+              android:password="true"/>
+    </LinearLayout>
+    <Button android:id="@+id/login"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:onClick="login"
+            android:text="LogIn" />
+    <Button android:id="@+id/create"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:onClick="create"
+            android:text="Create" />
+</LinearLayout>
