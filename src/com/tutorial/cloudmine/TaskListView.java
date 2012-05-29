@@ -34,7 +34,8 @@ public class TaskListView extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dataAdapter = new TaskAdapter(this, R.layout.task, new SimpleCMObject[0]);
+        SimpleCMObject someTask = new SimpleCMObject();
+        dataAdapter = new TaskAdapter(this, R.layout.task);
         setListAdapter(dataAdapter);
 
         Intent intent = getIntent();
@@ -48,7 +49,6 @@ public class TaskListView extends ListActivity {
             @Override
             public void onCompletion(SimpleObjectResponse response) {
                 dataAdapter.addAll(response.objects());
-
             }
 
             @Override

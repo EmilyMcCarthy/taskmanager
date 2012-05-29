@@ -1,7 +1,6 @@
 package com.tutorial.cloudmine;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +10,7 @@ import android.widget.TextView;
 import com.cloudmine.api.SimpleCMObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Copyright CloudMine LLC
@@ -25,12 +22,17 @@ public class TaskAdapter extends ArrayAdapter<SimpleCMObject> {
     public static final String TASK_NAME = "taskName";
     public static final String IS_DONE = "isDone";
     public static final String TASK_CLASS = "task";
-    private final Context context;
-    private final List<SimpleCMObject> data;
+    private final Activity context;
     private final int layoutResourceId;
-    public TaskAdapter(Context context, int textViewResourceId, SimpleCMObject[] data) {
-        super(context, textViewResourceId, data);
-        this.data = new ArrayList<SimpleCMObject>(Arrays.asList(data));
+    private final Runnable updated = new Runnable() {
+        @Override
+        public void run() {
+            notifyDataSetChanged();
+        }
+    };
+
+    public TaskAdapter(Activity context, int textViewResourceId) {
+        super(context, textViewResourceId, new ArrayList<SimpleCMObject>());
         this.context = context;
         layoutResourceId = textViewResourceId;
     }
@@ -40,7 +42,7 @@ public class TaskAdapter extends ArrayAdapter<SimpleCMObject> {
 
         TaskHolder holder;
         if(convertView == null) {
-            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
+            LayoutInflater inflater = context.getLayoutInflater();
             convertView = inflater.inflate(layoutResourceId, parent, false);
 
             holder = new TaskHolder();
@@ -52,20 +54,18 @@ public class TaskAdapter extends ArrayAdapter<SimpleCMObject> {
             holder = (TaskHolder)convertView.getTag();
         }
 
-        SimpleCMObject task = data.get(position);
+        SimpleCMObject task = getItem(position);
         holder.checkBox.setChecked(task.getBoolean(IS_DONE));
         holder.taskName.setText(task.getString(TASK_NAME));
         return convertView;
     }
 
     public void addAll(Collection<SimpleCMObject> toAdd) {
-        data.clear();
-        data.addAll(toAdd);
-    }
-
-    @Override
-    public void add(SimpleCMObject toAdd) {
-        data.add(toAdd);
+        clear();
+        for(SimpleCMObject simpleObject : toAdd) {
+            add(simpleObject);
+        }
+        context.runOnUiThread(updated);
     }
 
     static class TaskHolder {

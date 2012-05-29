@@ -38,7 +38,6 @@
     </content>
     <orderEntry type="jdk" jdkName="Android 2.3.3 Google APIs" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="Cloudmine-android" />
     <orderEntry type="module" module-name="cloudmine-javasdk" />
     <orderEntry type="library" name="org.slf4j:slf4j-api:1.6.4" level="project" />
     <orderEntry type="library" name="com.fasterxml.jackson.core:jackson-databind:2.0.0-RC2" level="project" />
