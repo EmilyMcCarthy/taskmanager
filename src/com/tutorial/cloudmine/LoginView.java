@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import com.cloudmine.api.User;
+import com.cloudmine.api.UserCloudMineWebService;
 import com.cloudmine.api.rest.CloudMineResponse;
 import com.cloudmine.api.rest.CloudMineWebService;
 import com.cloudmine.api.rest.callbacks.CloudMineResponseCallback;
@@ -26,7 +27,7 @@ public class LoginView extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.main);
+        setContentView(R.layout.login);
         setDefaultLogin();
     }
 
@@ -34,21 +35,24 @@ public class LoginView extends Activity {
     public void create(View view) {
         webService.asyncCreateUser(getUser(), new CloudMineResponseCallback() {
             public void onCompletion(CloudMineResponse response) {
-                Log.e(TAG, "CREATE SUCCEEDED");
+                login();
             }
             public void onFailure(Throwable error, String message) {
-                Log.e(TAG, "Create failed: ", error);
+                Log.e(TAG, "Create failed: ", error); //TODO show the user something proper here
             }
         });
     }
 
     public void login(View view) {
+        login();
+    }
+
+    private void login() {
+        //TODO should we should a processing message here?
         webService.asyncLogin(getUser(), new CloudMineResponseCallback() {
             @Override
             public void onCompletion(CloudMineResponse response) {
-                Intent goToTaskListView = new Intent(LoginView.this, TaskListView.class);
-                goToTaskListView.putExtra(STORE, webService.userWebService(response));
-                startActivity(goToTaskListView);
+                goToTaskListView(webService.userWebService(response));
             }
 
             @Override
@@ -56,6 +60,12 @@ public class LoginView extends Activity {
                 Log.e(TAG, "LogIn failed: ", error);
             }
         });
+    }
+
+    private void goToTaskListView(UserCloudMineWebService userWebService) {
+        Intent goToTaskListView = new Intent(this, TaskListView.class);
+        goToTaskListView.putExtra(STORE, userWebService);
+        startActivity(goToTaskListView);
     }
 
     private void setDefaultLogin() {

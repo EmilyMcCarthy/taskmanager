@@ -3,4 +3,9 @@
     <string name="app_name">taskmanager</string>
     <string name="cloudMineApplicationIdentifier">c1a562ee1e6f4a478803e7b51babe287</string>
     <string name="cloudMineAPIKey">3fc494b36d6d432d9afb051d819bdd72</string>
+    <string-array name="priorities">
+        <item>High</item>
+        <item>Medium</item>
+        <item>Low</item>
+    </string-array>
 </resources>

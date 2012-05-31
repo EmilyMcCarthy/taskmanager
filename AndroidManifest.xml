@@ -15,5 +15,7 @@
         </activity>
         <activity android:name = ".TaskListView">
         </activity>
+        <activity android:name=".DetailTaskEditView">
+        </activity>
     </application>
 </manifest> 

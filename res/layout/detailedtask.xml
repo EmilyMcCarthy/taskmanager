@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:orientation="vertical">
+    <LinearLayout
+                  android:orientation="horizontal"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content">
+        <TextView
+            android:text="Is Completed: "
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            />
+        <CheckBox
+                android:id="@+id/isDone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        <TextView
+            android:text="Priority: "
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            />
+        <Spinner
+            android:id="@+id/priorityPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/priorities"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+                  android:orientation="horizontal"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content">
+        <TextView
+                android:text="Task Name: "
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                />
+        <EditText android:id="@+id/taskName"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+        <TextView
+            android:text="Due Date: "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        <Button
+            android:id="@+id/dueDateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+</LinearLayout>

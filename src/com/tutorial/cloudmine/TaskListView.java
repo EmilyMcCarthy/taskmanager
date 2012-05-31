@@ -27,6 +27,7 @@ import org.apache.http.HttpResponse;
 public class TaskListView extends ListActivity {
     private static final String TAG = "TaskListView";
     private static final int ADD_ITEM = 1;
+    private static final int LOG_OUT = 2;
 
     private UserCloudMineWebService service;
     private TaskAdapter dataAdapter;
@@ -34,7 +35,7 @@ public class TaskListView extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SimpleCMObject someTask = new SimpleCMObject();
+
         dataAdapter = new TaskAdapter(this, R.layout.task);
         setListAdapter(dataAdapter);
 
@@ -62,6 +63,7 @@ public class TaskListView extends ListActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(Menu.NONE, ADD_ITEM, ADD_ITEM, "Add");
+        menu.add(Menu.NONE, LOG_OUT, LOG_OUT, "Log Out");
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -71,8 +73,18 @@ public class TaskListView extends ListActivity {
             case ADD_ITEM:
                 showDialog(0);
                 break;
+            case LOG_OUT:
+                logout();
+                break;
         }
         return false;
+    }
+
+    private void logout() {
+        service.asyncLogout();
+        //No need to wait for the logout to go through to go back to the login screen
+        Intent goToLoginView = new Intent(this, LoginView.class);
+        startActivity(goToLoginView);
     }
 
     @Override
