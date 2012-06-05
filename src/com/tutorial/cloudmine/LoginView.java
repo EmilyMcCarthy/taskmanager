@@ -64,7 +64,6 @@ public class LoginView extends Activity {
 
     private void goToTaskListView(UserCloudMineWebService userWebService) {
         Intent goToTaskListView = new Intent(this, TaskListView.class);
-        goToTaskListView.putExtra(STORE, userWebService);
         startActivity(goToTaskListView);
     }
 

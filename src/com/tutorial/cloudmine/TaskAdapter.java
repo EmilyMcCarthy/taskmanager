@@ -5,14 +5,15 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.TextView;
+import android.widget.*;
 import com.cloudmine.api.SimpleCMObject;
+import com.cloudmine.api.rest.CloudMineWebService;
+import org.joda.time.DateTimeUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Copyright CloudMine LLC
@@ -25,10 +26,18 @@ public class TaskAdapter extends ArrayAdapter<SimpleCMObject> {
     public static final String IS_DONE = "isDone";
     public static final String PRIORITY = "priority";
     public static final String DUE_DATE = "dueDate";
+    public static final String LOCATION = "location";
+    public static final String PICTURE = "picture";
     public static final String TASK_CLASS = "task";
     public static final String TASK_KEY = "TASK";
+    private static final long TASK_COMPLETION_TIME = 24 * 60 * 60 * 1000; //one day
     private final Activity context;
     private final int layoutResourceId;
+
+    public static Date defaultDueDate() {
+        return new Date(DateTimeUtils.currentTimeMillis() + TASK_COMPLETION_TIME);
+    }
+
     private final Runnable updated = new Runnable() {
         @Override
         public void run() {
@@ -54,6 +63,15 @@ public class TaskAdapter extends ArrayAdapter<SimpleCMObject> {
             holder.checkBox = (CheckBox)convertView.findViewById(R.id.isDone);
             holder.taskName = (TextView)convertView.findViewById(R.id.taskName);
 
+            holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    SimpleCMObject checkedItem = getItem(position);
+                    checkedItem.add(IS_DONE, b);
+                    CloudMineWebService.defaultService().asyncUpdate(checkedItem);
+                }
+            });
+
             convertView.setTag(holder);
             ((Button)convertView.findViewById(R.id.edit)).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -74,12 +92,27 @@ public class TaskAdapter extends ArrayAdapter<SimpleCMObject> {
         return convertView;
     }
 
-    public void addAll(Collection<SimpleCMObject> toAdd) {
+    public void setListContents(Collection<SimpleCMObject> toAdd) {
         clear();
         for(SimpleCMObject simpleObject : toAdd) {
             add(simpleObject);
         }
+        notifyUpdated();
+    }
+
+    private void notifyUpdated() {
         context.runOnUiThread(updated);
+    }
+
+    public Collection<SimpleCMObject> getCompletedTasks() {
+        List<SimpleCMObject> completedTasks = new ArrayList<SimpleCMObject>();
+        for(int i = 0; i < getCount(); i++) {
+            SimpleCMObject task = getItem(i);
+            if(task.getBoolean(IS_DONE, Boolean.FALSE)) {
+                completedTasks.add(task);
+            }
+        }
+        return completedTasks;
     }
 
     static class TaskHolder {

@@ -54,9 +54,83 @@
             android:layout_height="wrap_content"
             />
         <Button
-            android:id="@+id/dueDateTime"
+            android:id="@+id/dueDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="editDueDate"
+            />
+        <Button
+            android:id="@+id/dueTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="editDueTime"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            >
+        <TextView
+            android:text="Location: "
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />
+        <Button
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="editLocation"
+            />
     </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
+        <TextView
+            android:text="Image: "
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        <ImageView
+                android:id="@+id/image"
+                android:src="@drawable/noimage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="editImage"
+                android:clickable="true"
+                android:focusable="true"
+                />
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:gravity="bottom">
+        <Button
+            android:id="@+id/delete"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:onClick="delete"
+            android:gravity="center"
+            android:text="Delete Task"
+            />
+        <Button
+            android:id="@+id/save"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:onClick="save"
+            android:gravity="center"
+            android:text="Save and Quit"
+            />
+        <Button
+                android:id="@+id/quit"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:onClick="quit"
+                android:gravity="center"
+                android:text="Quit"
+                />
+    </LinearLayout>
+
 </LinearLayout>
