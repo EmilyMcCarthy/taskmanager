@@ -14,12 +14,13 @@ import android.widget.*;
 import com.cloudmine.api.CloudMineFile;
 import com.cloudmine.api.GeoPoint;
 import com.cloudmine.api.SimpleCMObject;
+import com.cloudmine.api.rest.CloudMineResponse;
 import com.cloudmine.api.rest.CloudMineWebService;
 import com.cloudmine.api.rest.FileCreationResponse;
+import com.cloudmine.api.rest.callbacks.CloudMineResponseCallback;
 import com.cloudmine.api.rest.callbacks.FileCreationResponseCallback;
 import com.cloudmine.api.rest.callbacks.FileLoadCallback;
 import com.cloudmine.api.rest.callbacks.WebServiceCallback;
-import org.apache.http.HttpResponse;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -47,6 +48,11 @@ public class DetailTaskEditView extends Activity {
         @Override
         public void onTimeSet(TimePicker timePicker, int hour, int minute) {
             updateTime(hour, minute);
+        }
+    };
+    private final CloudMineResponseCallback GO_TO_TASK_VIEW = new CloudMineResponseCallback(){
+        public void onCompletion(CloudMineResponse response) {
+            goToTaskView();
         }
     };
     private static final DateFormat DISPLAY_DATE_FORMAT = new SimpleDateFormat("MM-dd-yyyy");
@@ -103,6 +109,7 @@ public class DetailTaskEditView extends Activity {
             case CAPTURE_IMAGE_REQUEST_CODE:
                 if(resultCode == RESULT_OK) {
                     Bitmap photo = (Bitmap)data.getExtras().get("data");
+
                     setImage(photo);
                 }
                 break;
@@ -112,9 +119,9 @@ public class DetailTaskEditView extends Activity {
     }
 
     public void delete(View view) {
-        CloudMineWebService.defaultService().asyncDelete(new WebServiceCallback() {
+        CloudMineWebService.defaultService().asyncDelete(new WebServiceCallback<CloudMineResponse>() {
             @Override
-            public void onCompletion(HttpResponse response) {
+            public void onCompletion(CloudMineResponse response) {
                 goToTaskView();
             }
 
@@ -133,14 +140,13 @@ public class DetailTaskEditView extends Activity {
                     if(response.was(200, 201)) {
                         String pictureKey = response.getFileKey();
                         task.add("picture", pictureKey);
-                        CloudMineWebService.defaultService().asyncUpdate(updatedTask());
+                        CloudMineWebService.defaultService().asyncUpdate(updatedTask(), GO_TO_TASK_VIEW);
                     }
                 }
             });
         } else {
-            CloudMineWebService.defaultService().asyncUpdate(updatedTask());
+            CloudMineWebService.defaultService().asyncUpdate(updatedTask(), GO_TO_TASK_VIEW);
         }
-        goToTaskView();
     }
 
     public void quit(View view) {
@@ -283,7 +289,8 @@ public class DetailTaskEditView extends Activity {
             CloudMineWebService.defaultService().asyncLoad(pictureKey, new FileLoadCallback(pictureKey) {
                 @Override
                 public void onCompletion(CloudMineFile file) {
-                    Bitmap asBitmap = BitmapFactory.decodeByteArray(file.getFileContents(), 0, 0);
+                    byte[] pictureBytes = file.getFileContents();
+                    Bitmap asBitmap = BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes.length);
                     setImage(asBitmap);
                 }
             });

@@ -20,7 +20,6 @@ import com.cloudmine.api.rest.SimpleObjectResponse;
 import com.cloudmine.api.rest.callbacks.CloudMineResponseCallback;
 import com.cloudmine.api.rest.callbacks.SimpleObjectResponseCallback;
 import com.cloudmine.api.rest.callbacks.WebServiceCallback;
-import org.apache.http.HttpResponse;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -171,9 +170,9 @@ public class TaskListView extends ListActivity {
                 taskObject.add(TaskAdapter.IS_DONE, Boolean.FALSE);
                 taskObject.add(TaskAdapter.TASK_NAME, taskName);
                 taskObject.add(TaskAdapter.DUE_DATE, TaskAdapter.defaultDueDate());
-                service().create(taskObject, new WebServiceCallback() {
+                service().create(taskObject, new CloudMineResponseCallback() {
                     @Override
-                    public void onCompletion(HttpResponse response) {
+                    public void onCompletion(CloudMineResponse response) {
                         Log.e(TAG, "Got a response!");
                     }
 
