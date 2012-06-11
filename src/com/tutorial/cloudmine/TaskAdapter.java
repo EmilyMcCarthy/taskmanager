@@ -6,8 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.cloudmine.api.AndroidSimpleCMObject;
 import com.cloudmine.api.SimpleCMObject;
-import com.cloudmine.api.rest.CloudMineWebService;
+import com.cloudmine.api.rest.CMWebService;
 import org.joda.time.DateTimeUtils;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.List;
 
 /**
  * Copyright CloudMine LLC
- * User: johnmccarthy
+ * CMUser: johnmccarthy
  * Date: 5/24/12, 5:42 PM
  */
 public class TaskAdapter extends ArrayAdapter<SimpleCMObject> {
@@ -68,7 +69,7 @@ public class TaskAdapter extends ArrayAdapter<SimpleCMObject> {
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     SimpleCMObject checkedItem = getItem(position);
                     checkedItem.add(IS_DONE, b);
-                    CloudMineWebService.defaultService().asyncUpdate(checkedItem);
+                    CMWebService.defaultService().asyncUpdate(checkedItem);
                 }
             });
 
@@ -78,7 +79,7 @@ public class TaskAdapter extends ArrayAdapter<SimpleCMObject> {
                 public void onClick(View view) {
 
                     Intent goToDetailTaskEdit = new Intent(context, DetailTaskEditView.class);
-                    goToDetailTaskEdit.putExtra(TASK_KEY, getItem(position)); //TODO does this get messed up if the ordering changes? probably
+                    goToDetailTaskEdit.putExtra(TASK_KEY, new AndroidSimpleCMObject(getItem(position)));//TODO does this get messed up if the ordering changes? probably
                     context.startActivity(goToDetailTaskEdit);
                 }
             });

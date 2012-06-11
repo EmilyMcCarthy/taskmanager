@@ -11,16 +11,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.cloudmine.api.CloudMineFile;
-import com.cloudmine.api.GeoPoint;
-import com.cloudmine.api.SimpleCMObject;
-import com.cloudmine.api.rest.CloudMineResponse;
-import com.cloudmine.api.rest.CloudMineWebService;
-import com.cloudmine.api.rest.FileCreationResponse;
-import com.cloudmine.api.rest.callbacks.CloudMineResponseCallback;
+import com.cloudmine.api.*;
+import com.cloudmine.api.rest.CMWebService;
+import com.cloudmine.api.rest.callbacks.CMResponseCallback;
 import com.cloudmine.api.rest.callbacks.FileCreationResponseCallback;
 import com.cloudmine.api.rest.callbacks.FileLoadCallback;
-import com.cloudmine.api.rest.callbacks.WebServiceCallback;
+import com.cloudmine.api.rest.response.CMResponse;
+import com.cloudmine.api.rest.response.FileCreationResponse;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,12 +27,12 @@ import java.util.GregorianCalendar;
 
 /**
  * Copyright CloudMine LLC
- * User: johnmccarthy
+ * CMUser: johnmccarthy
  * Date: 5/29/12, 5:03 PM
  */
 public class DetailTaskEditView extends Activity {
     public static final String TAG = "DetailTaskEditView";
-    public static final GeoPoint CLOUD_MINE_OFFICE = new GeoPoint(39.958899, -75.15199);
+    public static final CMGeoPoint CLOUD_MINE_OFFICE = new CMGeoPoint(39.958899, -75.15199);
     public static final int LOCATION_DIALOG_ID = 3;
     public static final int CAPTURE_IMAGE_REQUEST_CODE = 100;
     private final DatePickerDialog.OnDateSetListener DATE_SET_LISTENER = new DatePickerDialog.OnDateSetListener() {
@@ -50,8 +47,8 @@ public class DetailTaskEditView extends Activity {
             updateTime(hour, minute);
         }
     };
-    private final CloudMineResponseCallback GO_TO_TASK_VIEW = new CloudMineResponseCallback(){
-        public void onCompletion(CloudMineResponse response) {
+    private final CMResponseCallback GO_TO_TASK_VIEW = new CMResponseCallback(){
+        public void onCompletion(CMResponse response) {
             goToTaskView();
         }
     };
@@ -59,8 +56,8 @@ public class DetailTaskEditView extends Activity {
     private static final DateFormat DISPLAY_TIME_FORMAT = new SimpleDateFormat("HH:mm");
     public static final int DATE_DIALOG_ID = 0;
     public static final int TIME_DIALOG_ID = 1;
-    private SimpleCMObject task;
-    private CloudMineFile pictureFile;
+    private AndroidSimpleCMObject task;
+    private CMFile pictureFile;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,7 +96,7 @@ public class DetailTaskEditView extends Activity {
 
     private void setImage(Bitmap photo) {
         ImageView image = (ImageView)findViewById(R.id.image);
-        pictureFile = new CloudMineFile(photo);
+        pictureFile = new AndroidCMFile(photo);
         image.setImageBitmap(photo);
     }
 
@@ -119,9 +116,9 @@ public class DetailTaskEditView extends Activity {
     }
 
     public void delete(View view) {
-        CloudMineWebService.defaultService().asyncDelete(new WebServiceCallback<CloudMineResponse>() {
+        CMWebService.defaultService().asyncDeleteObject(task, new CMResponseCallback() {
             @Override
-            public void onCompletion(CloudMineResponse response) {
+            public void onCompletion(CMResponse response) {
                 goToTaskView();
             }
 
@@ -129,23 +126,23 @@ public class DetailTaskEditView extends Activity {
             public void onFailure(Throwable error, String message) {
                 Log.e(TAG, "Failed deleting detail task");
             }
-        }, task);
+        });
     }
 
     public void save(View view) {
         if(pictureFile != null){
-            CloudMineWebService.defaultService().asyncUpload(pictureFile, new FileCreationResponseCallback(){
+            CMWebService.defaultService().asyncUpload(pictureFile, new FileCreationResponseCallback(){
                 @Override
                 public void onCompletion(FileCreationResponse response) {
                     if(response.was(200, 201)) {
                         String pictureKey = response.getFileKey();
                         task.add("picture", pictureKey);
-                        CloudMineWebService.defaultService().asyncUpdate(updatedTask(), GO_TO_TASK_VIEW);
+                        CMWebService.defaultService().asyncUpdate(updatedTask(), GO_TO_TASK_VIEW);
                     }
                 }
             });
         } else {
-            CloudMineWebService.defaultService().asyncUpdate(updatedTask(), GO_TO_TASK_VIEW);
+            CMWebService.defaultService().asyncUpdate(updatedTask(), GO_TO_TASK_VIEW);
         }
     }
 
@@ -192,7 +189,7 @@ public class DetailTaskEditView extends Activity {
                 EditText latitudeText = (EditText) locationPicker.findViewById(R.id.latitudeText);
                 double longitude = Double.valueOf(longitudeText.getText().toString());
                 double latitude = Double.valueOf(latitudeText.getText().toString());
-                task.add(TaskAdapter.LOCATION, new GeoPoint(longitude, latitude));
+                task.add(TaskAdapter.LOCATION, new CMGeoPoint(longitude, latitude));
                 setLocation();
             }
         });
@@ -238,7 +235,7 @@ public class DetailTaskEditView extends Activity {
         return task.getDate(TaskAdapter.DUE_DATE, new Date());
     }
 
-    private GeoPoint location() {
+    private CMGeoPoint location() {
         return task.getGeoPoint(TaskAdapter.LOCATION, CLOUD_MINE_OFFICE);
     }
 
@@ -278,7 +275,7 @@ public class DetailTaskEditView extends Activity {
 
     private void setLocation() {
         Button locationButton = (Button)findViewById(R.id.location);
-        GeoPoint location = location();
+        CMGeoPoint location = location();
 
         locationButton.setText(location.locationString());
     }
@@ -286,9 +283,9 @@ public class DetailTaskEditView extends Activity {
     private void setPicture() {
         String pictureKey = task.getString(TaskAdapter.PICTURE);
         if(pictureKey != null) {
-            CloudMineWebService.defaultService().asyncLoad(pictureKey, new FileLoadCallback(pictureKey) {
+            CMWebService.defaultService().asyncLoadFile(pictureKey, new FileLoadCallback(pictureKey) {
                 @Override
-                public void onCompletion(CloudMineFile file) {
+                public void onCompletion(CMFile file) {
                     byte[] pictureBytes = file.getFileContents();
                     Bitmap asBitmap = BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes.length);
                     setImage(asBitmap);

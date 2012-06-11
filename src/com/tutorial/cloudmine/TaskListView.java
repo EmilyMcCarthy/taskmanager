@@ -13,20 +13,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import com.cloudmine.api.SimpleCMObject;
-import com.cloudmine.api.UserCloudMineWebService;
-import com.cloudmine.api.rest.CloudMineResponse;
-import com.cloudmine.api.rest.CloudMineWebService;
-import com.cloudmine.api.rest.SimpleObjectResponse;
-import com.cloudmine.api.rest.callbacks.CloudMineResponseCallback;
-import com.cloudmine.api.rest.callbacks.SimpleObjectResponseCallback;
+import com.cloudmine.api.UserCMWebService;
+import com.cloudmine.api.rest.CMWebService;
+import com.cloudmine.api.rest.callbacks.CMResponseCallback;
+import com.cloudmine.api.rest.callbacks.SimpleCMObjectResponseCallback;
 import com.cloudmine.api.rest.callbacks.WebServiceCallback;
+import com.cloudmine.api.rest.response.CMResponse;
+import com.cloudmine.api.rest.response.SimpleCMObjectResponse;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
  * Copyright CloudMine LLC
- * User: johnmccarthy
+ * CMUser: johnmccarthy
  * Date: 5/24/12, 11:13 AM
  */
 public class TaskListView extends ListActivity {
@@ -35,10 +35,10 @@ public class TaskListView extends ListActivity {
     private static final int LOG_OUT = 2;
     private static final int DELETE_COMPLETED = 3;
 
-    private final WebServiceCallback updateListContentsCallback = new SimpleObjectResponseCallback() {
+    private final WebServiceCallback updateListContentsCallback = new SimpleCMObjectResponseCallback() {
 
         @Override
-        public void onCompletion(SimpleObjectResponse response) {
+        public void onCompletion(SimpleCMObjectResponse response) {
             dataAdapter.setListContents(response.objects());
         }
 
@@ -48,13 +48,13 @@ public class TaskListView extends ListActivity {
         }
     };
 
-    private final WebServiceCallback loadAllTasksCallback = new CloudMineResponseCallback() {
-        public void onCompletion(CloudMineResponse response) {
+    private final WebServiceCallback loadAllTasksCallback = new CMResponseCallback() {
+        public void onCompletion(CMResponse response) {
             loadAllTasks();
         }
     };
 
-    private UserCloudMineWebService service;
+    private UserCMWebService service;
     private TaskAdapter dataAdapter;
     private Dialog editorDialog = null;
     @Override
@@ -68,11 +68,11 @@ public class TaskListView extends ListActivity {
         loadAllTasks();
     }
 
-    private UserCloudMineWebService service() {
+    private UserCMWebService service() {
         if(service != null) {
             return service;
         } else {
-            return (UserCloudMineWebService)CloudMineWebService.defaultService();
+            return (UserCMWebService) CMWebService.defaultService();
         }
     }
 
@@ -84,7 +84,7 @@ public class TaskListView extends ListActivity {
 
     private void deleteCompletedTasks() {
         Collection<SimpleCMObject> completedTasks = dataAdapter.getCompletedTasks();
-        service().asyncDelete(completedTasks, loadAllTasksCallback);
+        service().asyncDeleteObjects(completedTasks, loadAllTasksCallback);
     }
 
     private void logout() {
@@ -170,9 +170,9 @@ public class TaskListView extends ListActivity {
                 taskObject.add(TaskAdapter.IS_DONE, Boolean.FALSE);
                 taskObject.add(TaskAdapter.TASK_NAME, taskName);
                 taskObject.add(TaskAdapter.DUE_DATE, TaskAdapter.defaultDueDate());
-                service().create(taskObject, new CloudMineResponseCallback() {
+                service().asyncInsert(taskObject, new CMResponseCallback() {
                     @Override
-                    public void onCompletion(CloudMineResponse response) {
+                    public void onCompletion(CMResponse response) {
                         Log.e(TAG, "Got a response!");
                     }
 

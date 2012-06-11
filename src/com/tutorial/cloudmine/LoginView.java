@@ -6,21 +6,22 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import com.cloudmine.api.User;
-import com.cloudmine.api.UserCloudMineWebService;
-import com.cloudmine.api.rest.CloudMineResponse;
-import com.cloudmine.api.rest.CloudMineWebService;
-import com.cloudmine.api.rest.callbacks.CloudMineResponseCallback;
+import com.cloudmine.api.AndroidCMUser;
+import com.cloudmine.api.UserCMWebService;
+import com.cloudmine.api.rest.AndroidCMWebService;
+import com.cloudmine.api.rest.CMWebService;
+import com.cloudmine.api.rest.callbacks.CMResponseCallback;
+import com.cloudmine.api.rest.response.CMResponse;
 
 /**
  * Copyright CloudMine LLC
- * User: johnmccarthy
+ * CMUser: johnmccarthy
  * Date: 5/22/12, 3:35 PM
  */
 public class LoginView extends Activity {
     private static final String TAG = "LoginView";
     public static final String STORE = "STORE";
-    private CloudMineWebService webService = new CloudMineWebService("c1a562ee1e6f4a478803e7b51babe287");
+    private CMWebService webService = new AndroidCMWebService("c1a562ee1e6f4a478803e7b51babe287");
 
 
     @Override
@@ -33,8 +34,8 @@ public class LoginView extends Activity {
 
 
     public void create(View view) {
-        webService.asyncCreateUser(getUser(), new CloudMineResponseCallback() {
-            public void onCompletion(CloudMineResponse response) {
+        webService.asyncCreateUser(getUser(), new CMResponseCallback() {
+            public void onCompletion(CMResponse response) {
                 login();
             }
             public void onFailure(Throwable error, String message) {
@@ -49,9 +50,9 @@ public class LoginView extends Activity {
 
     private void login() {
         //TODO should we should a processing message here?
-        webService.asyncLogin(getUser(), new CloudMineResponseCallback() {
+        webService.asyncLogin(getUser(), new CMResponseCallback() {
             @Override
-            public void onCompletion(CloudMineResponse response) {
+            public void onCompletion(CMResponse response) {
                 goToTaskListView(webService.userWebService(response));
             }
 
@@ -62,7 +63,7 @@ public class LoginView extends Activity {
         });
     }
 
-    private void goToTaskListView(UserCloudMineWebService userWebService) {
+    private void goToTaskListView(UserCMWebService userWebService) {
         Intent goToTaskListView = new Intent(this, TaskListView.class);
         startActivity(goToTaskListView);
     }
@@ -74,8 +75,8 @@ public class LoginView extends Activity {
         passwordField.setText("q");
     }
 
-    private User getUser() {
-        return new User(getEmailFieldText(), getPasswordFieldText());
+    private AndroidCMUser getUser() {
+        return new AndroidCMUser(getEmailFieldText(), getPasswordFieldText());
     }
 
     private String getEmailFieldText() {
