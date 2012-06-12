@@ -137,7 +137,7 @@ public class DetailTaskEditView extends Activity {
                 @Override
                 public void onCompletion(FileCreationResponse response) {
                     if (response.was(200, 201)) {
-                        String pictureKey = response.getFileKey();
+                        String pictureKey = response.fileKey();
                         task.add("picture", pictureKey);
                         service.asyncUpdate(updatedTask(), GO_TO_TASK_VIEW);
                     }
@@ -288,7 +288,7 @@ public class DetailTaskEditView extends Activity {
             service.asyncLoadFile(pictureKey, new FileLoadCallback(pictureKey) {
                 @Override
                 public void onCompletion(CMFile file) {
-                    byte[] pictureBytes = file.getFileContents();
+                    byte[] pictureBytes = file.fileContents();
                     Bitmap asBitmap = BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes.length);
                     setImage(asBitmap);
                 }
