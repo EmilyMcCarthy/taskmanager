@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.cloudmine.api.*;
+import com.cloudmine.api.rest.AndroidCMWebService;
 import com.cloudmine.api.rest.CMWebService;
 import com.cloudmine.api.rest.callbacks.CMResponseCallback;
 import com.cloudmine.api.rest.callbacks.FileCreationResponseCallback;
@@ -58,12 +59,13 @@ public class DetailTaskEditView extends Activity {
     public static final int TIME_DIALOG_ID = 1;
     private AndroidSimpleCMObject task;
     private CMFile pictureFile;
+    private CMWebService service;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detailedtask);
-
+        service = AndroidCMWebService.service().userWebService();
         task = getIntent().getParcelableExtra(TaskAdapter.TASK_KEY);
         fillInTaskInformation();
     }
@@ -116,7 +118,7 @@ public class DetailTaskEditView extends Activity {
     }
 
     public void delete(View view) {
-        CMWebService.defaultService().asyncDeleteObject(task, new CMResponseCallback() {
+        service.asyncDeleteObject(task, new CMResponseCallback() {
             @Override
             public void onCompletion(CMResponse response) {
                 goToTaskView();
@@ -131,18 +133,18 @@ public class DetailTaskEditView extends Activity {
 
     public void save(View view) {
         if(pictureFile != null){
-            CMWebService.defaultService().asyncUpload(pictureFile, new FileCreationResponseCallback(){
+            service.asyncUpload(pictureFile, new FileCreationResponseCallback() {
                 @Override
                 public void onCompletion(FileCreationResponse response) {
-                    if(response.was(200, 201)) {
+                    if (response.was(200, 201)) {
                         String pictureKey = response.getFileKey();
                         task.add("picture", pictureKey);
-                        CMWebService.defaultService().asyncUpdate(updatedTask(), GO_TO_TASK_VIEW);
+                        service.asyncUpdate(updatedTask(), GO_TO_TASK_VIEW);
                     }
                 }
             });
         } else {
-            CMWebService.defaultService().asyncUpdate(updatedTask(), GO_TO_TASK_VIEW);
+            service.asyncUpdate(updatedTask(), GO_TO_TASK_VIEW);
         }
     }
 
@@ -283,7 +285,7 @@ public class DetailTaskEditView extends Activity {
     private void setPicture() {
         String pictureKey = task.getString(TaskAdapter.PICTURE);
         if(pictureKey != null) {
-            CMWebService.defaultService().asyncLoadFile(pictureKey, new FileLoadCallback(pictureKey) {
+            service.asyncLoadFile(pictureKey, new FileLoadCallback(pictureKey) {
                 @Override
                 public void onCompletion(CMFile file) {
                     byte[] pictureBytes = file.getFileContents();

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.cloudmine.api.AndroidSimpleCMObject;
 import com.cloudmine.api.SimpleCMObject;
-import com.cloudmine.api.rest.CMWebService;
+import com.cloudmine.api.rest.AndroidCMWebService;
 import org.joda.time.DateTimeUtils;
 
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class TaskAdapter extends ArrayAdapter<SimpleCMObject> {
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     SimpleCMObject checkedItem = getItem(position);
                     checkedItem.add(IS_DONE, b);
-                    CMWebService.defaultService().asyncUpdate(checkedItem);
+                    AndroidCMWebService.service().asyncUpdate(checkedItem);
                 }
             });
 

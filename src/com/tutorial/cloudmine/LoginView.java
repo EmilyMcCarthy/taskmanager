@@ -7,11 +7,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import com.cloudmine.api.AndroidCMUser;
-import com.cloudmine.api.UserCMWebService;
+import com.cloudmine.api.CMApiCredentials;
 import com.cloudmine.api.rest.AndroidCMWebService;
-import com.cloudmine.api.rest.CMWebService;
 import com.cloudmine.api.rest.callbacks.CMResponseCallback;
+import com.cloudmine.api.rest.callbacks.LoginResponseCallback;
 import com.cloudmine.api.rest.response.CMResponse;
+import com.cloudmine.api.rest.response.LogInResponse;
 
 /**
  * Copyright CloudMine LLC
@@ -21,23 +22,26 @@ import com.cloudmine.api.rest.response.CMResponse;
 public class LoginView extends Activity {
     private static final String TAG = "LoginView";
     public static final String STORE = "STORE";
-    private CMWebService webService = new AndroidCMWebService("c1a562ee1e6f4a478803e7b51babe287");
+    private static final String APP_ID = "c1a562ee1e6f4a478803e7b51babe287";
+    private static final String API_KEY = "3fc494b36d6d432d9afb051d819bdd72";
+    public static final String USER_TOKEN_KEY = "userTokenJson";
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        CMApiCredentials.initialize(APP_ID, API_KEY);
         setContentView(R.layout.login);
         setDefaultLogin();
     }
 
 
     public void create(View view) {
-        webService.asyncCreateUser(getUser(), new CMResponseCallback() {
+        AndroidCMWebService.service().asyncCreateUser(getUser(), new CMResponseCallback() {
             public void onCompletion(CMResponse response) {
                 login();
             }
+
             public void onFailure(Throwable error, String message) {
                 Log.e(TAG, "Create failed: ", error); //TODO show the user something proper here
             }
@@ -50,10 +54,15 @@ public class LoginView extends Activity {
 
     private void login() {
         //TODO should we should a processing message here?
-        webService.asyncLogin(getUser(), new CMResponseCallback() {
+        AndroidCMWebService.service().asyncLogin(getUser(), new LoginResponseCallback() {
             @Override
-            public void onCompletion(CMResponse response) {
-                goToTaskListView(webService.userWebService(response));
+            public void onCompletion(LogInResponse response) {
+                if(response.wasSuccess()) {
+                    AndroidCMWebService.service().setLoggedInUser(response.userToken());
+                    goToTaskListView();
+                } else {
+                    //in a real app we should show a notification that the log in failed
+                }
             }
 
             @Override
@@ -63,7 +72,7 @@ public class LoginView extends Activity {
         });
     }
 
-    private void goToTaskListView(UserCMWebService userWebService) {
+    private void goToTaskListView() {
         Intent goToTaskListView = new Intent(this, TaskListView.class);
         startActivity(goToTaskListView);
     }

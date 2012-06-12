@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import com.cloudmine.api.SimpleCMObject;
 import com.cloudmine.api.UserCMWebService;
-import com.cloudmine.api.rest.CMWebService;
+import com.cloudmine.api.rest.AndroidCMWebService;
 import com.cloudmine.api.rest.callbacks.CMResponseCallback;
 import com.cloudmine.api.rest.callbacks.SimpleCMObjectResponseCallback;
 import com.cloudmine.api.rest.callbacks.WebServiceCallback;
@@ -56,7 +56,6 @@ public class TaskListView extends ListActivity {
 
     private UserCMWebService service;
     private TaskAdapter dataAdapter;
-    private Dialog editorDialog = null;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,31 +63,23 @@ public class TaskListView extends ListActivity {
         dataAdapter = new TaskAdapter(this, R.layout.task);
         setListAdapter(dataAdapter);
 
-        service = service();
+        service = AndroidCMWebService.service().userWebService();
         loadAllTasks();
-    }
-
-    private UserCMWebService service() {
-        if(service != null) {
-            return service;
-        } else {
-            return (UserCMWebService) CMWebService.defaultService();
-        }
     }
 
     private void loadAllTasks() {
         dataAdapter.setListContents(new ArrayList<SimpleCMObject>());
 
-        service().allObjectsOfClass(TaskAdapter.TASK_CLASS, updateListContentsCallback);
+        service.allObjectsOfClass(TaskAdapter.TASK_CLASS, updateListContentsCallback);
     }
 
     private void deleteCompletedTasks() {
         Collection<SimpleCMObject> completedTasks = dataAdapter.getCompletedTasks();
-        service().asyncDeleteObjects(completedTasks, loadAllTasksCallback);
+        service.asyncDeleteObjects(completedTasks, loadAllTasksCallback);
     }
 
     private void logout() {
-        service().asyncLogout();
+        service.asyncLogout();
         //No need to wait for the logout to go through to go back to the login screen
         Intent goToLoginView = new Intent(this, LoginView.class);
         startActivity(goToLoginView);
@@ -170,7 +161,7 @@ public class TaskListView extends ListActivity {
                 taskObject.add(TaskAdapter.IS_DONE, Boolean.FALSE);
                 taskObject.add(TaskAdapter.TASK_NAME, taskName);
                 taskObject.add(TaskAdapter.DUE_DATE, TaskAdapter.defaultDueDate());
-                service().asyncInsert(taskObject, new CMResponseCallback() {
+                service.asyncInsert(taskObject, new CMResponseCallback() {
                     @Override
                     public void onCompletion(CMResponse response) {
                         Log.e(TAG, "Got a response!");
