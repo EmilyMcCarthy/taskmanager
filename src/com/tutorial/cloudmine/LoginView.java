@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import com.cloudmine.api.AndroidCMUser;
 import com.cloudmine.api.CMApiCredentials;
+import com.cloudmine.api.DeviceIdentifier;
 import com.cloudmine.api.rest.AndroidCMWebService;
 import com.cloudmine.api.rest.callbacks.CMResponseCallback;
 import com.cloudmine.api.rest.callbacks.LoginResponseCallback;
@@ -30,6 +31,7 @@ public class LoginView extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DeviceIdentifier.initialize(getApplicationContext());
         CMApiCredentials.initialize(APP_ID, API_KEY);
         setContentView(R.layout.login);
         setDefaultLogin();
