@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import com.cloudmine.api.SimpleCMObject;
-import com.cloudmine.api.UserCMWebService;
+import com.cloudmine.api.rest.UserCMWebService;
 import com.cloudmine.api.rest.AndroidCMWebService;
 import com.cloudmine.api.rest.callbacks.CMResponseCallback;
 import com.cloudmine.api.rest.callbacks.SimpleCMObjectResponseCallback;
