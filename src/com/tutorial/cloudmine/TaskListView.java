@@ -156,7 +156,7 @@ public class TaskListView extends ListActivity {
                 EditText taskNameField = (EditText)dialog.findViewById(R.id.taskName);
                 String taskName = taskNameField.getText().toString();
 
-                SimpleCMObject taskObject = new SimpleCMObject();
+                SimpleCMObject taskObject = SimpleCMObject.SimpleCMObject();
                 taskObject.setClass(TaskAdapter.TASK_CLASS);
                 taskObject.add(TaskAdapter.IS_DONE, Boolean.FALSE);
                 taskObject.add(TaskAdapter.TASK_NAME, taskName);

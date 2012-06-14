@@ -33,7 +33,7 @@ import java.util.GregorianCalendar;
  */
 public class DetailTaskEditView extends Activity {
     public static final String TAG = "DetailTaskEditView";
-    public static final CMGeoPoint CLOUD_MINE_OFFICE = new CMGeoPoint(39.958899, -75.15199);
+    public static final CMGeoPoint CLOUD_MINE_OFFICE = CMGeoPoint.CMGeoPoint(39.958899, -75.15199);
     public static final int LOCATION_DIALOG_ID = 3;
     public static final int CAPTURE_IMAGE_REQUEST_CODE = 100;
     private final DatePickerDialog.OnDateSetListener DATE_SET_LISTENER = new DatePickerDialog.OnDateSetListener() {
@@ -191,7 +191,7 @@ public class DetailTaskEditView extends Activity {
                 EditText latitudeText = (EditText) locationPicker.findViewById(R.id.latitudeText);
                 double longitude = Double.valueOf(longitudeText.getText().toString());
                 double latitude = Double.valueOf(latitudeText.getText().toString());
-                task.add(TaskAdapter.LOCATION, new CMGeoPoint(longitude, latitude));
+                task.add(TaskAdapter.LOCATION, CMGeoPoint.CMGeoPoint(longitude, latitude));
                 setLocation();
             }
         });
