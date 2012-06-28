@@ -19,6 +19,7 @@ import com.cloudmine.api.rest.callbacks.FileCreationResponseCallback;
 import com.cloudmine.api.rest.callbacks.FileLoadCallback;
 import com.cloudmine.api.rest.response.CMResponse;
 import com.cloudmine.api.rest.response.FileCreationResponse;
+import com.cloudmine.api.rest.response.FileLoadResponse;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -27,7 +28,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * Copyright CloudMine LLC
+ * <br>Copyright CloudMine LLC. All rights reserved<br> See LICENSE file included with SDK for details.
  * CMUser: johnmccarthy
  * Date: 5/29/12, 5:03 PM
  */
@@ -65,7 +66,7 @@ public class DetailTaskEditView extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detailedtask);
-        service = AndroidCMWebService.service().userWebService();
+        service = AndroidCMWebService.getService().getUserWebService();
         task = getIntent().getParcelableExtra(TaskAdapter.TASK_KEY);
         fillInTaskInformation();
     }
@@ -137,7 +138,7 @@ public class DetailTaskEditView extends Activity {
                 @Override
                 public void onCompletion(FileCreationResponse response) {
                     if (response.was(200, 201)) {
-                        String pictureKey = response.fileKey();
+                        String pictureKey = response.getFileName();
                         task.add("picture", pictureKey);
                         service.asyncUpdate(updatedTask(), GO_TO_TASK_VIEW);
                     }
@@ -179,8 +180,8 @@ public class DetailTaskEditView extends Activity {
         EditText longitudeText = (EditText)content.findViewById(R.id.longitudeText);
         EditText latitudeText = (EditText)content.findViewById(R.id.latitudeText);
 
-        latitudeText.setText(String.valueOf(location().latitude()));
-        longitudeText.setText(String.valueOf(location().longitude()));
+        latitudeText.setText(String.valueOf(location().getLatitude()));
+        longitudeText.setText(String.valueOf(location().getLongitude()));
 
         locationPickerBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
@@ -279,7 +280,7 @@ public class DetailTaskEditView extends Activity {
         Button locationButton = (Button)findViewById(R.id.location);
         CMGeoPoint location = location();
 
-        locationButton.setText(location.locationString());
+        locationButton.setText(location.getLocationString());
     }
 
     private void setPicture() {
@@ -287,10 +288,13 @@ public class DetailTaskEditView extends Activity {
         if(pictureKey != null) {
             service.asyncLoadFile(pictureKey, new FileLoadCallback(pictureKey) {
                 @Override
-                public void onCompletion(CMFile file) {
-                    byte[] pictureBytes = file.fileContents();
-                    Bitmap asBitmap = BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes.length);
-                    setImage(asBitmap);
+                public void onCompletion(FileLoadResponse fileResponse) {
+                    if(fileResponse.wasSuccess()) {
+                        CMFile file = fileResponse.getFile();
+                        byte[] pictureBytes = file.getFileContents();
+                        Bitmap asBitmap = BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes.length);
+                        setImage(asBitmap);
+                    }
                 }
             });
         }

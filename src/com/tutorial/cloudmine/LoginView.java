@@ -13,10 +13,10 @@ import com.cloudmine.api.rest.AndroidCMWebService;
 import com.cloudmine.api.rest.callbacks.CMResponseCallback;
 import com.cloudmine.api.rest.callbacks.LoginResponseCallback;
 import com.cloudmine.api.rest.response.CMResponse;
-import com.cloudmine.api.rest.response.LogInResponse;
+import com.cloudmine.api.rest.response.LoginResponse;
 
 /**
- * Copyright CloudMine LLC
+ * <br>Copyright CloudMine LLC. All rights reserved<br> See LICENSE file included with SDK for details.
  * CMUser: johnmccarthy
  * Date: 5/22/12, 3:35 PM
  */
@@ -39,7 +39,7 @@ public class LoginView extends Activity {
 
 
     public void create(View view) {
-        AndroidCMWebService.service().asyncCreateUser(getUser(), new CMResponseCallback() {
+        AndroidCMWebService.getService().asyncCreateUser(getUser(), new CMResponseCallback() {
             public void onCompletion(CMResponse response) {
                 login();
             }
@@ -56,11 +56,11 @@ public class LoginView extends Activity {
 
     private void login() {
         //TODO should we should a processing message here?
-        AndroidCMWebService.service().asyncLogin(getUser(), new LoginResponseCallback() {
+        AndroidCMWebService.getService().asyncLogin(getUser(), new LoginResponseCallback() {
             @Override
-            public void onCompletion(LogInResponse response) {
+            public void onCompletion(LoginResponse response) {
                 if(response.wasSuccess()) {
-                    AndroidCMWebService.service().setLoggedInUser(response.userToken());
+                    AndroidCMWebService.getService().setLoggedInUser(response.getSessionToken());
                     goToTaskListView();
                 } else {
                     //in a real app we should show a notification that the log in failed

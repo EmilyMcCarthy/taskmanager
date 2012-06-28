@@ -16,8 +16,8 @@ import com.cloudmine.api.SimpleCMObject;
 import com.cloudmine.api.rest.UserCMWebService;
 import com.cloudmine.api.rest.AndroidCMWebService;
 import com.cloudmine.api.rest.callbacks.CMResponseCallback;
+import com.cloudmine.api.rest.callbacks.Callback;
 import com.cloudmine.api.rest.callbacks.SimpleCMObjectResponseCallback;
-import com.cloudmine.api.rest.callbacks.WebServiceCallback;
 import com.cloudmine.api.rest.response.CMResponse;
 import com.cloudmine.api.rest.response.SimpleCMObjectResponse;
 
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Copyright CloudMine LLC
+ * <br>Copyright CloudMine LLC. All rights reserved<br> See LICENSE file included with SDK for details.
  * CMUser: johnmccarthy
  * Date: 5/24/12, 11:13 AM
  */
@@ -35,11 +35,11 @@ public class TaskListView extends ListActivity {
     private static final int LOG_OUT = 2;
     private static final int DELETE_COMPLETED = 3;
 
-    private final WebServiceCallback updateListContentsCallback = new SimpleCMObjectResponseCallback() {
+    private final Callback updateListContentsCallback = new SimpleCMObjectResponseCallback() {
 
         @Override
         public void onCompletion(SimpleCMObjectResponse response) {
-            dataAdapter.setListContents(response.objects());
+            dataAdapter.setListContents(response.getObjects());
         }
 
         @Override
@@ -48,7 +48,7 @@ public class TaskListView extends ListActivity {
         }
     };
 
-    private final WebServiceCallback loadAllTasksCallback = new CMResponseCallback() {
+    private final Callback loadAllTasksCallback = new CMResponseCallback() {
         public void onCompletion(CMResponse response) {
             loadAllTasks();
         }
@@ -63,14 +63,14 @@ public class TaskListView extends ListActivity {
         dataAdapter = new TaskAdapter(this, R.layout.task);
         setListAdapter(dataAdapter);
 
-        service = AndroidCMWebService.service().userWebService();
+        service = AndroidCMWebService.getService().getUserWebService();
         loadAllTasks();
     }
 
     private void loadAllTasks() {
         dataAdapter.setListContents(new ArrayList<SimpleCMObject>());
 
-        service.allObjectsOfClass(TaskAdapter.TASK_CLASS, updateListContentsCallback);
+        service.asyncLoadObjectsOfClass(TaskAdapter.TASK_CLASS, updateListContentsCallback);
     }
 
     private void deleteCompletedTasks() {

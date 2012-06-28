@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Copyright CloudMine LLC
+ * <br>Copyright CloudMine LLC. All rights reserved<br> See LICENSE file included with SDK for details.
  * CMUser: johnmccarthy
  * Date: 5/24/12, 5:42 PM
  */
@@ -69,7 +69,7 @@ public class TaskAdapter extends ArrayAdapter<SimpleCMObject> {
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     SimpleCMObject checkedItem = getItem(position);
                     checkedItem.add(IS_DONE, b);
-                    AndroidCMWebService.service().asyncUpdate(checkedItem);
+                    AndroidCMWebService.getService().asyncUpdate(checkedItem);
                 }
             });
 
